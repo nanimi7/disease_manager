@@ -205,21 +205,23 @@ const CalendarScreen = () => {
 
   // 파스텔톤 색상 팔레트
   const pastelColors = [
-    { bg: '#FFB3BA', text: '#8B4550' }, // 파스텔 핑크
-    { bg: '#BAFFC9', text: '#4A7C59' }, // 파스텔 그린
-    { bg: '#BAE1FF', text: '#4A6FA5' }, // 파스텔 블루
-    { bg: '#FFFFBA', text: '#7A7A00' }, // 파스텔 옐로우
-    { bg: '#FFE4BA', text: '#8B6914' }, // 파스텔 오렌지
-    { bg: '#E8BAFF', text: '#6B3A7D' }, // 파스텔 퍼플
-    { bg: '#BAFFED', text: '#3A7D6B' }, // 파스텔 민트
-    { bg: '#FFC9DE', text: '#7D3A5A' }, // 파스텔 로즈
+    { bg: '#A8D8EA', text: '#2E6B7E' }, // 하늘색
+    { bg: '#FFB6C1', text: '#8B3A4A' }, // 핑크
+    { bg: '#C3E6CB', text: '#3D6B4A' }, // 연두색
+    { bg: '#F9E79F', text: '#7D6608' }, // 노란색
+    { bg: '#D7BDE2', text: '#5B3A6B' }, // 라벤더
+    { bg: '#F5CBA7', text: '#8B5A2B' }, // 살구색
+    { bg: '#AED6F1', text: '#2471A3' }, // 연파랑
+    { bg: '#FADBD8', text: '#943126' }, // 연빨강
+    { bg: '#D5F5E3', text: '#1E8449' }, // 민트
+    { bg: '#FCF3CF', text: '#9A7D0A' }, // 크림
   ];
 
-  // diseaseId 기반으로 색상 선택
-  const getDiseaseColor = (diseaseId) => {
+  // 병명 기반으로 색상 선택 (같은 병명은 항상 같은 색상)
+  const getDiseaseColor = (diseaseName) => {
     let hash = 0;
-    for (let i = 0; i < diseaseId.length; i++) {
-      hash = diseaseId.charCodeAt(i) + ((hash << 5) - hash);
+    for (let i = 0; i < diseaseName.length; i++) {
+      hash = diseaseName.charCodeAt(i) + ((hash << 5) - hash);
     }
     const index = Math.abs(hash) % pastelColors.length;
     return pastelColors[index];
@@ -292,7 +294,7 @@ const CalendarScreen = () => {
               {groupedDiseases.slice(0, 2).map(({ diseaseId, count }) => {
                 const disease = diseases.find(d => d.id === diseaseId);
                 if (!disease) return null;
-                const color = getDiseaseColor(diseaseId);
+                const color = getDiseaseColor(disease.diseaseName);
                 return (
                   <span
                     key={diseaseId}
