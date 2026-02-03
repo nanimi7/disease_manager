@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.72.1",
     "autoprefixer": "^10.4.23",
     "date-fns": "^4.1.0",
     "firebase": "^12.8.0",

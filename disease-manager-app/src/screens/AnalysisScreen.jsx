@@ -3,6 +3,7 @@ import { format, subMonths } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
 import { getUserDiseases } from '../services/diseaseService';
 import { getSymptomsByDateRange } from '../services/symptomService';
+import { analyzeSymptoms } from '../services/aiService';
 import PainLevelChart from '../components/PainLevelChart';
 import FrequencyChart from '../components/FrequencyChart';
 import MedicationChart from '../components/MedicationChart';
@@ -15,7 +16,9 @@ const AnalysisScreen = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [analysis, setAnalysis] = useState(null);
+  const [aiAnalysis, setAiAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
 
   useEffect(() => {
     loadDiseases();
@@ -70,13 +73,61 @@ const AnalysisScreen = () => {
       const symptoms = result.symptoms;
       const basicAnalysis = calculateBasicStats(symptoms, start, end);
       setAnalysis(basicAnalysis);
+      setAiAnalysis(null);
 
-      // TODO: Phase 2에서 Claude API 연동하여 AI 분석 추가
+      // AI 분석 호출 (증상이 있는 경우에만)
+      if (symptoms.length > 0) {
+        setAiLoading(true);
+
+        // 사용자 정보 준비
+        const age = userInfo?.birthdate ? calculateAge(userInfo.birthdate) : null;
+        const userInfoForAI = {
+          age,
+          gender: userInfo?.gender
+        };
+
+        // 질병 정보 준비
+        const selectedDisease = diseases.find(d => d.id === selectedDiseaseId);
+        const diseaseInfoForAI = {
+          diseaseName: selectedDisease?.diseaseName,
+          medication: selectedDisease?.medication
+        };
+
+        // 기간 정보 준비
+        const periodInfo = {
+          startDate: start,
+          endDate: end,
+          totalDays: basicAnalysis.totalDays
+        };
+
+        const aiResult = await analyzeSymptoms(userInfoForAI, diseaseInfoForAI, symptoms, periodInfo);
+
+        if (aiResult.success) {
+          setAiAnalysis(aiResult.analysis);
+        } else {
+          console.error('AI 분석 실패:', aiResult.error);
+        }
+
+        setAiLoading(false);
+      }
     } else {
       alert('데이터 조회 실패: ' + result.error);
     }
 
     setLoading(false);
+  };
+
+  // 생년월일로부터 나이 계산
+  const calculateAge = (birthdateStr) => {
+    if (!birthdateStr) return null;
+    const birthDate = new Date(birthdateStr);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
   };
 
   const calculateBasicStats = (symptoms, startDate, endDate) => {
@@ -436,10 +487,10 @@ const AnalysisScreen = () => {
                 )}
               </div>
 
-              {/* AI Analysis (Phase 2) */}
+              {/* AI Analysis */}
               <div style={{
-                background: '#fff9e6',
-                border: '1px solid #ffe082',
+                background: aiAnalysis ? '#f0f7ff' : '#fff9e6',
+                border: `1px solid ${aiAnalysis ? '#90caf9' : '#ffe082'}`,
                 padding: '20px',
                 borderRadius: '12px',
                 marginBottom: '24px'
@@ -454,26 +505,112 @@ const AnalysisScreen = () => {
                   gap: '8px'
                 }}>
                   <span>🤖</span>
-                  AI 분석 (Phase 2 예정)
+                  AI 분석 결과
                 </h4>
-                <p style={{
-                  fontSize: '13px',
-                  color: '#666',
-                  marginBottom: '12px'
-                }}>
-                  Claude API를 연동하여 다음 내용을 제공할 예정입니다:
-                </p>
-                <ul style={{
-                  fontSize: '13px',
-                  color: '#666',
-                  paddingLeft: '20px',
-                  margin: 0
-                }}>
-                  <li style={{ marginBottom: '6px' }}>주요 발생 패턴 분석</li>
-                  <li style={{ marginBottom: '6px' }}>예상 트리거 분석</li>
-                  <li style={{ marginBottom: '6px' }}>환자가 알아두면 좋은 정보</li>
-                  <li>의료진에게 전달하면 좋을 내용</li>
-                </ul>
+
+                {aiLoading ? (
+                  <div style={{
+                    textAlign: 'center',
+                    padding: '40px 20px'
+                  }}>
+                    <div style={{
+                      width: '40px',
+                      height: '40px',
+                      border: '4px solid #e0e0e0',
+                      borderTop: '4px solid #667eea',
+                      borderRadius: '50%',
+                      animation: 'spin 1s linear infinite',
+                      margin: '0 auto 16px'
+                    }} />
+                    <p style={{ fontSize: '14px', color: '#666' }}>
+                      AI가 증상 데이터를 분석하고 있습니다...
+                    </p>
+                    <style>{`
+                      @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                      }
+                    `}</style>
+                  </div>
+                ) : aiAnalysis ? (
+                  <div style={{
+                    fontSize: '14px',
+                    color: '#333',
+                    lineHeight: '1.8',
+                    whiteSpace: 'pre-wrap'
+                  }}>
+                    {aiAnalysis.split('###').map((section, idx) => {
+                      if (idx === 0) return null;
+                      const lines = section.trim().split('\n');
+                      const title = lines[0]?.trim();
+                      const content = lines.slice(1).join('\n').trim();
+
+                      return (
+                        <div key={idx} style={{
+                          marginBottom: '20px',
+                          padding: '16px',
+                          background: 'white',
+                          borderRadius: '10px',
+                          border: '1px solid #e0e8f0'
+                        }}>
+                          <h5 style={{
+                            fontSize: '15px',
+                            fontWeight: '600',
+                            color: '#1976d2',
+                            marginBottom: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                          }}>
+                            {title.includes('심각도') && '📊'}
+                            {title.includes('패턴') && '📈'}
+                            {title.includes('주의사항') && '⚠️'}
+                            {title.includes('의사') && '👨‍⚕️'}
+                            {title.includes('권고') && '💡'}
+                            {title}
+                          </h5>
+                          <div style={{
+                            fontSize: '13px',
+                            color: '#555',
+                            lineHeight: '1.7'
+                          }}>
+                            {content}
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    <div style={{
+                      marginTop: '16px',
+                      padding: '12px',
+                      background: '#fff3e0',
+                      borderRadius: '8px',
+                      border: '1px solid #ffcc80'
+                    }}>
+                      <p style={{
+                        fontSize: '12px',
+                        color: '#e65100',
+                        margin: 0,
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '8px'
+                      }}>
+                        <span style={{ flexShrink: 0 }}>⚠️</span>
+                        <span>이 분석은 AI가 제공하는 참고 정보이며, 정확한 진단과 치료는 반드시 의료 전문가와 상담하세요.</span>
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{
+                    textAlign: 'center',
+                    padding: '20px',
+                    color: '#999'
+                  }}>
+                    <p style={{ fontSize: '13px' }}>
+                      AI 분석 결과가 여기에 표시됩니다.
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Detailed Records */}
