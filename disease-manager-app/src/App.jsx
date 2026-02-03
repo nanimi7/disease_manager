@@ -11,27 +11,18 @@ function MainApp() {
   const { currentUser } = useAuth();
   const [showSignup, setShowSignup] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
-  const [demoMode, setDemoMode] = useState(false);
 
   const handleLogout = async () => {
-    if (demoMode) {
-      setDemoMode(false);
-      return;
-    }
     if (window.confirm('로그아웃 하시겠습니까?')) {
       await logOut();
     }
   };
 
-  const handleDemoMode = () => {
-    setDemoMode(true);
-  };
-
-  if (!currentUser && !demoMode) {
+  if (!currentUser) {
     return showSignup ? (
-      <Signup onToggleForm={() => setShowSignup(false)} onDemoMode={handleDemoMode} />
+      <Signup onToggleForm={() => setShowSignup(false)} />
     ) : (
-      <Login onToggleForm={() => setShowSignup(true)} onDemoMode={handleDemoMode} />
+      <Login onToggleForm={() => setShowSignup(true)} />
     );
   }
 
@@ -83,7 +74,7 @@ function MainApp() {
                 color: '#999',
                 margin: 0
               }}>
-                {demoMode ? '데모 모드' : currentUser?.email}
+                {currentUser?.email}
               </p>
             </div>
           </div>

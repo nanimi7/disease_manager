@@ -438,23 +438,51 @@ const CalendarScreen = () => {
           </h3>
           <button
             onClick={() => {
+              if (diseases.length === 0) {
+                alert('증상을 추가하려면 먼저 프로필 화면에서 질병을 등록해주세요.');
+                return;
+              }
               resetForm();
               setShowModal(true);
             }}
             style={{
               padding: '8px 16px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: diseases.length === 0 ? '#ccc' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               color: 'white',
               border: 'none',
               borderRadius: '8px',
               fontSize: '13px',
               fontWeight: '600',
-              cursor: 'pointer'
+              cursor: diseases.length === 0 ? 'not-allowed' : 'pointer',
+              opacity: diseases.length === 0 ? 0.7 : 1
             }}
           >
             + 증상 추가
           </button>
         </div>
+
+        {/* 질병 미등록 안내 메시지 */}
+        {diseases.length === 0 && (
+          <div style={{
+            background: '#fff3e0',
+            border: '1px solid #ffcc80',
+            borderRadius: '10px',
+            padding: '12px',
+            marginBottom: '16px'
+          }}>
+            <p style={{
+              fontSize: '13px',
+              color: '#e65100',
+              margin: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <span>⚠️</span>
+              증상을 추가하려면 먼저 프로필 화면에서 질병을 등록해주세요.
+            </p>
+          </div>
+        )}
 
         {/* Day Symptoms List */}
         {daySymptoms.length === 0 ? (
@@ -467,7 +495,7 @@ const CalendarScreen = () => {
               등록된 증상이 없습니다
             </p>
             <p style={{ fontSize: '12px' }}>
-              날짜를 선택하고 증상을 추가해보세요
+              {diseases.length === 0 ? '프로필에서 질병 등록 후 증상을 추가할 수 있습니다' : '날짜를 선택하고 증상을 추가해보세요'}
             </p>
           </div>
         ) : (

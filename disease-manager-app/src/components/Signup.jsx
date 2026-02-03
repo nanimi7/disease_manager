@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { signUp } from '../services/authService';
 
-const Signup = ({ onToggleForm, onDemoMode }) => {
+const Signup = ({ onToggleForm }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -214,34 +214,6 @@ const Signup = ({ onToggleForm, onDemoMode }) => {
             </button>
           </form>
 
-          <div style={{
-            borderTop: '1px solid #eee',
-            marginTop: '20px',
-            paddingTop: '20px'
-          }}>
-            <button
-              type="button"
-              onClick={onDemoMode}
-              style={{
-                width: '100%',
-                padding: '14px',
-                background: '#f5f5f5',
-                color: '#333',
-                border: '2px solid #e0e0e0',
-                borderRadius: '10px',
-                fontSize: '16px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-            >
-              <span style={{ fontSize: '20px' }}>🎨</span>
-              데모 모드로 체험하기
-            </button>
-          </div>
         </div>
       </div>
     </div>

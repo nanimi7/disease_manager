@@ -484,16 +484,23 @@ const ProfileScreen = () => {
             보유 질병
           </h3>
           <button
-            onClick={() => setShowAddDisease(!showAddDisease)}
+            onClick={() => {
+              if (!hasUserInfo) {
+                alert('질병을 추가하려면 먼저 프로필 정보(생년월일, 성별)를 입력해주세요.');
+                return;
+              }
+              setShowAddDisease(!showAddDisease);
+            }}
             style={{
               padding: '8px 16px',
-              background: showAddDisease ? '#f5f5f5' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: showAddDisease ? '#f5f5f5' : !hasUserInfo ? '#ccc' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               color: showAddDisease ? '#666' : 'white',
               border: 'none',
               borderRadius: '8px',
               fontSize: '13px',
               fontWeight: '600',
-              cursor: 'pointer'
+              cursor: !hasUserInfo ? 'not-allowed' : 'pointer',
+              opacity: !hasUserInfo ? 0.7 : 1
             }}
           >
             {showAddDisease ? '취소' : '+ 추가'}
@@ -539,6 +546,28 @@ const ProfileScreen = () => {
         )}
 
         {/* Diseases List */}
+        {!hasUserInfo && (
+          <div style={{
+            background: '#fff3e0',
+            border: '1px solid #ffcc80',
+            borderRadius: '10px',
+            padding: '12px',
+            marginBottom: '16px'
+          }}>
+            <p style={{
+              fontSize: '13px',
+              color: '#e65100',
+              margin: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <span>⚠️</span>
+              질병을 등록하려면 먼저 프로필 정보를 입력해주세요.
+            </p>
+          </div>
+        )}
+
         {diseases.length === 0 ? (
           <div style={{
             textAlign: 'center',
@@ -549,7 +578,7 @@ const ProfileScreen = () => {
               등록된 질병이 없습니다
             </p>
             <p style={{ fontSize: '12px' }}>
-              증상을 추적하려면 질병을 먼저 등록해주세요
+              {hasUserInfo ? '증상을 추적하려면 질병을 먼저 등록해주세요' : '프로필 정보 입력 후 질병을 등록할 수 있습니다'}
             </p>
           </div>
         ) : (

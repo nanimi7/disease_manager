@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { signIn } from '../services/authService';
 
-const Login = ({ onToggleForm, onDemoMode }) => {
+const Login = ({ onToggleForm }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -190,42 +190,6 @@ const Login = ({ onToggleForm, onDemoMode }) => {
             </button>
           </form>
 
-          <div style={{
-            borderTop: '1px solid #eee',
-            marginTop: '20px',
-            paddingTop: '20px'
-          }}>
-            <button
-              type="button"
-              onClick={onDemoMode}
-              style={{
-                width: '100%',
-                padding: '14px',
-                background: '#f5f5f5',
-                color: '#333',
-                border: '2px solid #e0e0e0',
-                borderRadius: '10px',
-                fontSize: '16px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-            >
-              <span style={{ fontSize: '20px' }}>🎨</span>
-              데모 모드로 체험하기
-            </button>
-            <p style={{
-              textAlign: 'center',
-              fontSize: '12px',
-              color: '#999',
-              marginTop: '10px'
-            }}>
-              Firebase 설정 없이 모든 기능을 체험할 수 있습니다
-            </p>
-          </div>
         </div>
       </div>
     </div>
