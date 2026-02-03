@@ -4,21 +4,19 @@ import { useAuth } from '../context/AuthContext';
 import { getUserDiseases } from '../services/diseaseService';
 import { getSymptomsByDateRange } from '../services/symptomService';
 import { analyzeSymptoms } from '../services/aiService';
-import PainLevelChart from '../components/PainLevelChart';
-import FrequencyChart from '../components/FrequencyChart';
-import MedicationChart from '../components/MedicationChart';
 
 const AnalysisScreen = () => {
   const { currentUser, userInfo } = useAuth();
   const [diseases, setDiseases] = useState([]);
   const [selectedDiseaseId, setSelectedDiseaseId] = useState('');
-  const [periodType, setPeriodType] = useState('1month'); // 1month, 3months, custom
+  const [periodType, setPeriodType] = useState('1month');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [analysis, setAnalysis] = useState(null);
   const [aiAnalysis, setAiAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   useEffect(() => {
     loadDiseases();
@@ -40,6 +38,7 @@ const AnalysisScreen = () => {
     }
 
     setLoading(true);
+    setShowDetails(false);
 
     let start, end;
     const today = new Date();
@@ -60,7 +59,6 @@ const AnalysisScreen = () => {
       end = endDate;
     }
 
-    // 증상 데이터 가져오기
     const result = await getSymptomsByDateRange(
       currentUser.uid,
       start,
@@ -69,31 +67,26 @@ const AnalysisScreen = () => {
     );
 
     if (result.success) {
-      // 기본 통계 계산
       const symptoms = result.symptoms;
       const basicAnalysis = calculateBasicStats(symptoms, start, end);
       setAnalysis(basicAnalysis);
       setAiAnalysis(null);
 
-      // AI 분석 호출 (증상이 있는 경우에만)
       if (symptoms.length > 0) {
         setAiLoading(true);
 
-        // 사용자 정보 준비
         const age = userInfo?.birthdate ? calculateAge(userInfo.birthdate) : null;
         const userInfoForAI = {
           age,
           gender: userInfo?.gender
         };
 
-        // 질병 정보 준비
         const selectedDisease = diseases.find(d => d.id === selectedDiseaseId);
         const diseaseInfoForAI = {
           diseaseName: selectedDisease?.diseaseName,
           medication: selectedDisease?.medication
         };
 
-        // 기간 정보 준비
         const periodInfo = {
           startDate: start,
           endDate: end,
@@ -117,7 +110,6 @@ const AnalysisScreen = () => {
     setLoading(false);
   };
 
-  // 생년월일로부터 나이 계산
   const calculateAge = (birthdateStr) => {
     if (!birthdateStr) return null;
     const birthDate = new Date(birthdateStr);
@@ -135,7 +127,7 @@ const AnalysisScreen = () => {
       return {
         count: 0,
         avgPainLevel: 0,
-        medicationRate: 0,
+        dailyAvg: 0,
         message: '해당 기간에 기록된 증상이 없습니다.'
       };
     }
@@ -143,37 +135,21 @@ const AnalysisScreen = () => {
     const count = symptoms.length;
     const totalPainLevel = symptoms.reduce((sum, s) => sum + s.painLevel, 0);
     const avgPainLevel = (totalPainLevel / count).toFixed(1);
-    const medicationCount = symptoms.filter(s => s.medicationTaken).length;
-    const medicationRate = ((medicationCount / count) * 100).toFixed(1);
 
-    // 날짜별 발생 빈도 계산
-    const dateCount = {};
-    symptoms.forEach(s => {
-      const date = s.date;
-      dateCount[date] = (dateCount[date] || 0) + 1;
-    });
-
-    const days = Object.keys(dateCount).length;
     const startDateObj = new Date(startDate);
     const endDateObj = new Date(endDate);
     const totalDays = Math.ceil((endDateObj - startDateObj) / (1000 * 60 * 60 * 24)) + 1;
-    const frequencyPerWeek = ((days / totalDays) * 7).toFixed(1);
+    const dailyAvg = (count / totalDays).toFixed(2);
 
     return {
       count,
       avgPainLevel,
-      medicationRate,
-      frequencyPerWeek,
+      dailyAvg,
       totalDays,
       startDate,
       endDate,
       symptoms
     };
-  };
-
-  const getDiseaseName = (diseaseId) => {
-    const disease = diseases.find(d => d.id === diseaseId);
-    return disease ? disease.diseaseName : '';
   };
 
   const inputStyle = {
@@ -232,7 +208,8 @@ const AnalysisScreen = () => {
     background: bgColor,
     border: `1px solid ${borderColor}`,
     padding: '16px',
-    borderRadius: '12px'
+    borderRadius: '12px',
+    textAlign: 'center'
   });
 
   return (
@@ -375,122 +352,52 @@ const AnalysisScreen = () => {
             </div>
           ) : (
             <div>
-              {/* Basic Statistics */}
+              {/* Basic Statistics - 3개만 표시 */}
               <div style={{ marginBottom: '24px' }}>
-                <h4 style={{
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#333',
-                  marginBottom: '12px'
-                }}>
-                  기본 통계
-                </h4>
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(2, 1fr)',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
                   gap: '12px'
                 }}>
                   <div style={statCardStyle('#e3f2fd', '#90caf9')}>
-                    <p style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
+                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px' }}>
                       총 발생 횟수
                     </p>
-                    <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#1976d2' }}>
+                    <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#1976d2' }}>
                       {analysis.count}회
                     </p>
                   </div>
-                  <div style={statCardStyle('#e8f5e9', '#a5d6a7')}>
-                    <p style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
-                      평균 통증 강도
-                    </p>
-                    <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#388e3c' }}>
-                      {analysis.avgPainLevel}/10
-                    </p>
-                  </div>
-                  <div style={statCardStyle('#f3e5f5', '#ce93d8')}>
-                    <p style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
-                      약물 복용률
-                    </p>
-                    <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#7b1fa2' }}>
-                      {analysis.medicationRate}%
-                    </p>
-                  </div>
                   <div style={statCardStyle('#fff3e0', '#ffb74d')}>
-                    <p style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
-                      주당 평균 발생
+                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px' }}>
+                      일평균 발생
                     </p>
-                    <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#f57c00' }}>
-                      {analysis.frequencyPerWeek}회
+                    <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#f57c00' }}>
+                      {analysis.dailyAvg}회
+                    </p>
+                  </div>
+                  <div style={statCardStyle('#e8f5e9', '#a5d6a7')}>
+                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px' }}>
+                      평균 통증강도
+                    </p>
+                    <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#388e3c' }}>
+                      {analysis.avgPainLevel}
                     </p>
                   </div>
                 </div>
-              </div>
-
-              {/* Analysis Period */}
-              <div style={{
-                background: '#f8f9fa',
-                padding: '16px',
-                borderRadius: '12px',
-                border: '1px solid #e9ecef',
-                marginBottom: '24px'
-              }}>
-                <h4 style={{
-                  fontSize: '13px',
-                  fontWeight: '600',
-                  color: '#333',
-                  marginBottom: '8px'
+                <p style={{
+                  fontSize: '12px',
+                  color: '#999',
+                  textAlign: 'center',
+                  marginTop: '12px'
                 }}>
-                  📅 분석 기간
-                </h4>
-                <p style={{ fontSize: '13px', color: '#666' }}>
-                  {analysis.startDate} ~ {analysis.endDate} <span style={{ fontWeight: '600', color: '#333' }}>({analysis.totalDays}일)</span>
+                  {analysis.startDate} ~ {analysis.endDate} ({analysis.totalDays}일)
                 </p>
-              </div>
-
-              {/* Charts Section */}
-              <div style={{ marginBottom: '24px' }}>
-                <h4 style={{
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#333',
-                  marginBottom: '12px'
-                }}>
-                  📊 데이터 시각화
-                </h4>
-
-                {analysis.symptoms.length >= 2 ? (
-                  <div>
-                    <PainLevelChart symptoms={analysis.symptoms} />
-                    {analysis.symptoms.length >= 3 && (
-                      <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: '1fr',
-                        gap: '16px',
-                        marginTop: '16px'
-                      }}>
-                        <FrequencyChart symptoms={analysis.symptoms} />
-                        <MedicationChart symptoms={analysis.symptoms} />
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div style={{
-                    background: '#f8f9fa',
-                    border: '1px solid #e9ecef',
-                    padding: '24px',
-                    borderRadius: '12px',
-                    textAlign: 'center'
-                  }}>
-                    <p style={{ fontSize: '13px', color: '#999' }}>
-                      차트를 표시하려면 최소 2개 이상의 증상 기록이 필요합니다
-                    </p>
-                  </div>
-                )}
               </div>
 
               {/* AI Analysis */}
               <div style={{
-                background: aiAnalysis ? '#f0f7ff' : '#fff9e6',
-                border: `1px solid ${aiAnalysis ? '#90caf9' : '#ffe082'}`,
+                background: aiAnalysis ? '#f0f7ff' : '#f8f9fa',
+                border: `1px solid ${aiAnalysis ? '#90caf9' : '#e9ecef'}`,
                 padding: '20px',
                 borderRadius: '12px',
                 marginBottom: '24px'
@@ -536,8 +443,7 @@ const AnalysisScreen = () => {
                   <div style={{
                     fontSize: '14px',
                     color: '#333',
-                    lineHeight: '1.8',
-                    whiteSpace: 'pre-wrap'
+                    lineHeight: '1.8'
                   }}>
                     {aiAnalysis.split('###').map((section, idx) => {
                       if (idx === 0) return null;
@@ -547,20 +453,20 @@ const AnalysisScreen = () => {
 
                       return (
                         <div key={idx} style={{
-                          marginBottom: '20px',
-                          padding: '16px',
+                          marginBottom: '16px',
+                          padding: '14px',
                           background: 'white',
                           borderRadius: '10px',
                           border: '1px solid #e0e8f0'
                         }}>
                           <h5 style={{
-                            fontSize: '15px',
+                            fontSize: '14px',
                             fontWeight: '600',
                             color: '#1976d2',
-                            marginBottom: '12px',
+                            marginBottom: '10px',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '8px'
+                            gap: '6px'
                           }}>
                             {title.includes('심각도') && '📊'}
                             {title.includes('패턴') && '📈'}
@@ -572,7 +478,8 @@ const AnalysisScreen = () => {
                           <div style={{
                             fontSize: '13px',
                             color: '#555',
-                            lineHeight: '1.7'
+                            lineHeight: '1.7',
+                            whiteSpace: 'pre-wrap'
                           }}>
                             {content}
                           </div>
@@ -581,21 +488,21 @@ const AnalysisScreen = () => {
                     })}
 
                     <div style={{
-                      marginTop: '16px',
-                      padding: '12px',
+                      marginTop: '12px',
+                      padding: '10px 12px',
                       background: '#fff3e0',
                       borderRadius: '8px',
                       border: '1px solid #ffcc80'
                     }}>
                       <p style={{
-                        fontSize: '12px',
+                        fontSize: '11px',
                         color: '#e65100',
                         margin: 0,
                         display: 'flex',
                         alignItems: 'flex-start',
-                        gap: '8px'
+                        gap: '6px'
                       }}>
-                        <span style={{ flexShrink: 0 }}>⚠️</span>
+                        <span>⚠️</span>
                         <span>이 분석은 AI가 제공하는 참고 정보이며, 정확한 진단과 치료는 반드시 의료 전문가와 상담하세요.</span>
                       </p>
                     </div>
@@ -613,74 +520,95 @@ const AnalysisScreen = () => {
                 )}
               </div>
 
-              {/* Detailed Records */}
+              {/* Detailed Records - 접기/펼치기 */}
               <div>
-                <h4 style={{
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#333',
-                  marginBottom: '12px'
-                }}>
-                  📝 상세 기록
-                </h4>
-                <div style={{
-                  maxHeight: '400px',
-                  overflow: 'auto',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '10px'
-                }}>
-                  {analysis.symptoms.map((symptom, idx) => (
-                    <div key={idx} style={{
-                      background: '#f8f9fa',
-                      borderRadius: '12px',
-                      padding: '16px',
-                      border: '1px solid #e9ecef'
-                    }}>
-                      <div style={{ marginBottom: '8px' }}>
-                        <p style={{
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          color: '#333',
-                          marginBottom: '8px'
-                        }}>
-                          {symptom.date}
-                        </p>
+                <button
+                  onClick={() => setShowDetails(!showDetails)}
+                  style={{
+                    width: '100%',
+                    padding: '14px',
+                    background: '#f8f9fa',
+                    border: '1px solid #e9ecef',
+                    borderRadius: '10px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: '#333',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>📝</span>
+                    상세 기록 ({analysis.symptoms.length}건)
+                  </span>
+                  <span style={{
+                    transform: showDetails ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.2s'
+                  }}>
+                    ▼
+                  </span>
+                </button>
+
+                {showDetails && (
+                  <div style={{
+                    marginTop: '12px',
+                    maxHeight: '400px',
+                    overflow: 'auto',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px'
+                  }}>
+                    {analysis.symptoms.map((symptom, idx) => (
+                      <div key={idx} style={{
+                        background: '#f8f9fa',
+                        borderRadius: '10px',
+                        padding: '14px',
+                        border: '1px solid #e9ecef'
+                      }}>
                         <div style={{
                           display: 'flex',
-                          gap: '12px',
-                          fontSize: '13px',
-                          color: '#666'
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          marginBottom: symptom.details ? '10px' : 0
                         }}>
-                          <span>
-                            통증: <span style={{ fontWeight: '600', color: '#333' }}>{symptom.painLevel}/10</span>
+                          <span style={{
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            color: '#333'
+                          }}>
+                            {symptom.date} {symptom.symptomTime && `(${symptom.symptomTime.replace('AM', '오전').replace('PM', '오후')})`}
                           </span>
-                          <span>
-                            약물: <span style={{
-                              fontWeight: '600',
-                              color: symptom.medicationTaken ? '#4caf50' : '#999'
-                            }}>
-                              {symptom.medicationTaken ? '예' : '아니오'}
-                            </span>
-                          </span>
+                          <div style={{
+                            display: 'flex',
+                            gap: '10px',
+                            fontSize: '12px',
+                            color: '#666'
+                          }}>
+                            <span>통증 <strong style={{ color: '#333' }}>{symptom.painLevel}</strong></span>
+                            <span>약물 <strong style={{ color: symptom.medicationTaken ? '#4caf50' : '#999' }}>
+                              {symptom.medicationTaken ? 'O' : 'X'}
+                            </strong></span>
+                          </div>
                         </div>
+                        {symptom.details && (
+                          <p style={{
+                            fontSize: '12px',
+                            color: '#666',
+                            background: '#fff',
+                            padding: '10px',
+                            borderRadius: '6px',
+                            lineHeight: '1.5',
+                            margin: 0
+                          }}>
+                            {symptom.details}
+                          </p>
+                        )}
                       </div>
-                      {symptom.details && (
-                        <p style={{
-                          fontSize: '13px',
-                          color: '#666',
-                          background: '#fff',
-                          padding: '12px',
-                          borderRadius: '8px',
-                          lineHeight: '1.5',
-                          margin: 0
-                        }}>
-                          {symptom.details}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
