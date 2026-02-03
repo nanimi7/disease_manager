@@ -127,7 +127,7 @@ const AnalysisScreen = () => {
       return {
         count: 0,
         avgPainLevel: 0,
-        dailyAvg: 0,
+        multiOccurrenceDays: 0,
         message: '해당 기간에 기록된 증상이 없습니다.'
       };
     }
@@ -136,15 +136,23 @@ const AnalysisScreen = () => {
     const totalPainLevel = symptoms.reduce((sum, s) => sum + s.painLevel, 0);
     const avgPainLevel = (totalPainLevel / count).toFixed(1);
 
+    // 날짜별 발생 횟수 계산
+    const dateCount = {};
+    symptoms.forEach(s => {
+      dateCount[s.date] = (dateCount[s.date] || 0) + 1;
+    });
+
+    // 2회 이상 발생한 날짜 수
+    const multiOccurrenceDays = Object.values(dateCount).filter(c => c >= 2).length;
+
     const startDateObj = new Date(startDate);
     const endDateObj = new Date(endDate);
     const totalDays = Math.ceil((endDateObj - startDateObj) / (1000 * 60 * 60 * 24)) + 1;
-    const dailyAvg = (count / totalDays).toFixed(2);
 
     return {
       count,
       avgPainLevel,
-      dailyAvg,
+      multiOccurrenceDays,
       totalDays,
       startDate,
       endDate,
@@ -369,10 +377,10 @@ const AnalysisScreen = () => {
                   </div>
                   <div style={statCardStyle('#fff3e0', '#ffb74d')}>
                     <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px' }}>
-                      일평균 발생
+                      2회 이상 발생일
                     </p>
                     <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#f57c00' }}>
-                      {analysis.dailyAvg}회
+                      {analysis.multiOccurrenceDays}일
                     </p>
                   </div>
                   <div style={statCardStyle('#e8f5e9', '#a5d6a7')}>
