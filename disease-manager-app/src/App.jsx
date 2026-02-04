@@ -157,33 +157,38 @@ function MainApp() {
           padding: '16px 20px'
         }}>
           <div style={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            padding: '12px 16px',
+            background: '#334155',
+            padding: '14px 16px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '12px',
-            borderRadius: '12px',
-            boxShadow: '0 4px 12px rgba(102, 126, 234, 0.3)'
+            borderRadius: '12px'
           }}>
             <div style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
+              gap: '14px',
               flex: 1
             }}>
-              <img
-                src="/app-icon.png"
-                alt="App Icon"
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '10px'
-                }}
-              />
+              <div style={{
+                width: '44px',
+                height: '44px',
+                background: '#475569',
+                borderRadius: '10px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+              </div>
               <div>
                 <p style={{
-                  fontSize: '13px',
+                  fontSize: '14px',
                   fontWeight: '600',
                   color: 'white',
                   margin: 0
@@ -191,24 +196,24 @@ function MainApp() {
                   앱으로 더 편리하게!
                 </p>
                 <p style={{
-                  fontSize: '11px',
-                  color: 'rgba(255,255,255,0.85)',
+                  fontSize: '12px',
+                  color: 'rgba(255,255,255,0.7)',
                   margin: '2px 0 0 0'
                 }}>
                   홈 화면에 추가하고 빠르게 접속하세요
                 </p>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+            <div style={{ display: 'flex', gap: '8px', flexShrink: 0, alignItems: 'center' }}>
               <button
                 onClick={handleInstallClick}
                 style={{
-                  padding: '8px 14px',
+                  padding: '8px 16px',
                   background: 'white',
                   border: 'none',
-                  borderRadius: '8px',
-                  color: '#667eea',
-                  fontSize: '12px',
+                  borderRadius: '6px',
+                  color: '#334155',
+                  fontSize: '13px',
                   fontWeight: '600',
                   cursor: 'pointer'
                 }}
@@ -219,18 +224,17 @@ function MainApp() {
                 onClick={handleDismissBanner}
                 style={{
                   padding: '8px',
-                  background: 'rgba(255,255,255,0.2)',
+                  background: 'transparent',
                   border: 'none',
-                  borderRadius: '8px',
-                  color: 'white',
-                  fontSize: '16px',
+                  color: 'rgba(255,255,255,0.7)',
+                  fontSize: '20px',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
                 }}
               >
-                ✕
+                ×
               </button>
             </div>
           </div>
