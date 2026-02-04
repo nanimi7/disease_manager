@@ -309,23 +309,52 @@ const AnalysisScreen = () => {
     // **text** → bold 변환 (서브헤더 스타일 포함)
     const parseBold = (line) => {
       const parts = line.split(/\*\*(.*?)\*\*/g);
-      return parts.map((part, i) => {
+      const result = [];
+
+      parts.forEach((part, i) => {
         if (i % 2 === 1) {
-          // 콜론으로 끝나면 서브헤더 스타일
-          if (part.endsWith(':')) {
-            return <strong key={i} style={{
-              display: 'block',
-              color: '#1a1a1a',
-              fontWeight: '700',
-              fontSize: '15px',
-              marginTop: i > 0 ? '16px' : '0',
-              marginBottom: '8px'
-            }}>{part}</strong>;
+          // Bold 텍스트 처리
+          // "소제목: 내용" 패턴 체크 (콜론 뒤에 내용이 있는 경우)
+          const colonMatch = part.match(/^(.+?:)\s*(.*)$/);
+          if (colonMatch && colonMatch[2]) {
+            // 소제목과 내용을 분리
+            result.push(
+              <strong key={`${i}-header`} style={{
+                display: 'block',
+                color: '#1a1a1a',
+                fontWeight: '700',
+                fontSize: '15px',
+                marginTop: result.length > 0 ? '14px' : '0',
+                marginBottom: '6px'
+              }}>{colonMatch[1]}</strong>
+            );
+            result.push(
+              <span key={`${i}-content`} style={{ display: 'block' }}>{colonMatch[2]}</span>
+            );
+          } else if (part.endsWith(':')) {
+            // 콜론으로만 끝나면 서브헤더 스타일
+            result.push(
+              <strong key={i} style={{
+                display: 'block',
+                color: '#1a1a1a',
+                fontWeight: '700',
+                fontSize: '15px',
+                marginTop: result.length > 0 ? '14px' : '0',
+                marginBottom: '6px'
+              }}>{part}</strong>
+            );
+          } else {
+            // 일반 bold 텍스트
+            result.push(
+              <strong key={i} style={{ color: '#1a1a1a', fontWeight: '600' }}>{part}</strong>
+            );
           }
-          return <strong key={i} style={{ color: '#1a1a1a', fontWeight: '600' }}>{part}</strong>;
+        } else if (part) {
+          result.push(part);
         }
-        return part;
       });
+
+      return result;
     };
 
     lines.forEach((line, idx) => {
