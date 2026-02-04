@@ -220,6 +220,85 @@ const AnalysisScreen = () => {
     textAlign: 'center'
   });
 
+  // 마크다운 파싱 함수
+  const renderMarkdown = (text) => {
+    if (!text) return null;
+
+    // --- 구분선 제거
+    let cleaned = text.replace(/^---+$/gm, '').trim();
+
+    // 줄 단위로 파싱
+    const lines = cleaned.split('\n');
+    const elements = [];
+    let currentList = [];
+
+    const flushList = () => {
+      if (currentList.length > 0) {
+        elements.push(
+          <ul key={`list-${elements.length}`} style={{
+            margin: '8px 0',
+            paddingLeft: '20px',
+            listStyle: 'none'
+          }}>
+            {currentList.map((item, i) => (
+              <li key={i} style={{
+                marginBottom: '8px',
+                position: 'relative',
+                paddingLeft: '12px'
+              }}>
+                <span style={{
+                  position: 'absolute',
+                  left: 0,
+                  color: '#667eea'
+                }}>•</span>
+                {parseBold(item)}
+              </li>
+            ))}
+          </ul>
+        );
+        currentList = [];
+      }
+    };
+
+    // **text** → bold 변환
+    const parseBold = (line) => {
+      const parts = line.split(/\*\*(.*?)\*\*/g);
+      return parts.map((part, i) =>
+        i % 2 === 1
+          ? <strong key={i} style={{ color: '#37352f', fontWeight: '600' }}>{part}</strong>
+          : part
+      );
+    };
+
+    lines.forEach((line, idx) => {
+      const trimmed = line.trim();
+
+      if (!trimmed) {
+        flushList();
+        return;
+      }
+
+      // 리스트 아이템
+      if (trimmed.startsWith('- ')) {
+        currentList.push(trimmed.substring(2));
+      } else {
+        flushList();
+        // 일반 텍스트
+        elements.push(
+          <p key={idx} style={{
+            margin: '0 0 10px 0',
+            lineHeight: '1.7'
+          }}>
+            {parseBold(trimmed)}
+          </p>
+        );
+      }
+    });
+
+    flushList();
+    return elements;
+  };
+
   return (
     <div>
       {/* Page Title */}
@@ -525,13 +604,12 @@ const AnalysisScreen = () => {
                             </div>
                             {/* Section Content */}
                             <div style={{
-                              padding: '0 16px 14px 50px',
-                              fontSize: '13px',
-                              color: '#4a4a4a',
-                              lineHeight: '1.75',
-                              whiteSpace: 'pre-wrap'
+                              padding: '0 16px 14px 16px',
+                              fontSize: '14px',
+                              color: '#37352f',
+                              lineHeight: '1.7'
                             }}>
-                              {content}
+                              {renderMarkdown(content)}
                             </div>
                           </div>
                         );
