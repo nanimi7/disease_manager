@@ -380,7 +380,14 @@ const AnalysisScreen = () => {
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  style={{ ...inputStyle, width: '100%' }}
+                  style={{
+                    ...inputStyle,
+                    width: '100%',
+                    color: '#333',
+                    background: '#fff',
+                    WebkitAppearance: 'none',
+                    minHeight: '48px'
+                  }}
                   onFocus={(e) => e.target.style.borderColor = '#667eea'}
                   onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
                 />
@@ -391,7 +398,14 @@ const AnalysisScreen = () => {
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  style={{ ...inputStyle, width: '100%' }}
+                  style={{
+                    ...inputStyle,
+                    width: '100%',
+                    color: '#333',
+                    background: '#fff',
+                    WebkitAppearance: 'none',
+                    minHeight: '48px'
+                  }}
                   onFocus={(e) => e.target.style.borderColor = '#667eea'}
                   onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
                 />

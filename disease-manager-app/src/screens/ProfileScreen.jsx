@@ -318,7 +318,13 @@ const ProfileScreen = () => {
                 type="date"
                 value={birthdate}
                 onChange={(e) => setBirthdate(e.target.value)}
-                style={inputStyle}
+                style={{
+                  ...inputStyle,
+                  color: '#333',
+                  background: '#fff',
+                  WebkitAppearance: 'none',
+                  minHeight: '48px'
+                }}
                 onFocus={(e) => e.target.style.borderColor = '#667eea'}
                 onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
               />

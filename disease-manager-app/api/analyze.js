@@ -48,6 +48,34 @@ export default async function handler(req, res) {
       painDistribution[level] = (painDistribution[level] || 0) + 1;
     });
 
+    // 월별 발생 횟수 계산
+    const monthlyCount = {};
+    symptoms.forEach(s => {
+      const month = s.date.substring(0, 7); // YYYY-MM 형식
+      monthlyCount[month] = (monthlyCount[month] || 0) + 1;
+    });
+
+    // 월 수 계산
+    const monthCount = Object.keys(monthlyCount).length;
+    const monthlyAvg = monthCount > 0 ? (totalCount / monthCount).toFixed(1) : 0;
+
+    // 최다 발생 월 찾기
+    let maxMonth = '';
+    let maxMonthCount = 0;
+    Object.entries(monthlyCount).forEach(([month, count]) => {
+      if (count > maxMonthCount) {
+        maxMonth = month;
+        maxMonthCount = count;
+      }
+    });
+
+    // 월 이름 포맷팅
+    const formatMonth = (monthStr) => {
+      if (!monthStr) return '없음';
+      const [year, month] = monthStr.split('-');
+      return `${year}년 ${parseInt(month)}월`;
+    };
+
     const prompt = `당신은 환자의 증상 데이터를 분석하는 의료 AI 어시스턴트입니다.
 주어진 데이터를 바탕으로 환자에게 유용한 분석 결과를 제공해주세요.
 
@@ -66,6 +94,9 @@ export default async function handler(req, res) {
 - 총 발생 횟수: ${totalCount}회
 - 평균 통증 강도: ${avgPainLevel}/10
 - 약물 복용률: ${medicationRate}%
+- 월평균 발생 빈도: ${monthlyAvg}회
+- 최다 발생 월: ${formatMonth(maxMonth)} (${maxMonthCount}회)
+- 월별 발생 현황: ${Object.entries(monthlyCount).map(([m, c]) => `${formatMonth(m)}: ${c}회`).join(', ')}
 - 통증 분포: ${JSON.stringify(painDistribution)}
 
 ## 상세 증상 기록
