@@ -236,21 +236,26 @@ const AnalysisScreen = () => {
       if (currentList.length > 0) {
         elements.push(
           <ul key={`list-${elements.length}`} style={{
-            margin: '8px 0',
-            paddingLeft: '20px',
+            margin: '12px 0',
+            paddingLeft: '8px',
             listStyle: 'none'
           }}>
             {currentList.map((item, i) => (
               <li key={i} style={{
-                marginBottom: '8px',
+                marginBottom: '14px',
                 position: 'relative',
-                paddingLeft: '12px'
+                paddingLeft: '18px',
+                lineHeight: '1.75'
               }}>
                 <span style={{
                   position: 'absolute',
                   left: 0,
-                  color: '#667eea'
-                }}>•</span>
+                  top: '2px',
+                  width: '8px',
+                  height: '8px',
+                  background: '#667eea',
+                  borderRadius: '50%'
+                }}></span>
                 {parseBold(item)}
               </li>
             ))}
@@ -260,14 +265,26 @@ const AnalysisScreen = () => {
       }
     };
 
-    // **text** → bold 변환
+    // **text** → bold 변환 (서브헤더 스타일 포함)
     const parseBold = (line) => {
       const parts = line.split(/\*\*(.*?)\*\*/g);
-      return parts.map((part, i) =>
-        i % 2 === 1
-          ? <strong key={i} style={{ color: '#37352f', fontWeight: '600' }}>{part}</strong>
-          : part
-      );
+      return parts.map((part, i) => {
+        if (i % 2 === 1) {
+          // 콜론으로 끝나면 서브헤더 스타일
+          if (part.endsWith(':')) {
+            return <strong key={i} style={{
+              display: 'block',
+              color: '#1a1a1a',
+              fontWeight: '700',
+              fontSize: '15px',
+              marginTop: i > 0 ? '16px' : '0',
+              marginBottom: '8px'
+            }}>{part}</strong>;
+          }
+          return <strong key={i} style={{ color: '#1a1a1a', fontWeight: '600' }}>{part}</strong>;
+        }
+        return part;
+      });
     };
 
     lines.forEach((line, idx) => {
@@ -286,8 +303,8 @@ const AnalysisScreen = () => {
         // 일반 텍스트
         elements.push(
           <p key={idx} style={{
-            margin: '0 0 10px 0',
-            lineHeight: '1.7'
+            margin: '0 0 14px 0',
+            lineHeight: '1.85'
           }}>
             {parseBold(trimmed)}
           </p>
@@ -583,45 +600,45 @@ const AnalysisScreen = () => {
 
                         return (
                           <div key={idx} style={{
-                            marginBottom: '16px',
+                            marginBottom: '20px',
                             background: theme.bg,
-                            borderRadius: '8px',
-                            borderLeft: `4px solid ${theme.border}`,
+                            borderRadius: '12px',
+                            borderLeft: `5px solid ${theme.border}`,
                             overflow: 'hidden'
                           }}>
                             {/* Section Header */}
                             <div style={{
-                              padding: '14px 16px 12px',
+                              padding: '16px 18px 14px',
                               display: 'flex',
                               alignItems: 'center',
-                              gap: '10px'
+                              gap: '12px'
                             }}>
                               <span style={{
-                                width: '24px',
-                                height: '24px',
+                                width: '28px',
+                                height: '28px',
                                 background: theme.iconBg,
-                                borderRadius: '4px',
+                                borderRadius: '6px',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '13px'
+                                fontSize: '15px'
                               }}>
                                 {theme.icon}
                               </span>
                               <span style={{
-                                fontSize: '14px',
-                                fontWeight: '600',
-                                color: '#37352f'
+                                fontSize: '16px',
+                                fontWeight: '700',
+                                color: '#1a1a1a'
                               }}>
                                 {title}
                               </span>
                             </div>
                             {/* Section Content */}
                             <div style={{
-                              padding: '0 16px 14px 16px',
-                              fontSize: '14px',
-                              color: '#37352f',
-                              lineHeight: '1.7'
+                              padding: '0 18px 18px 18px',
+                              fontSize: '15px',
+                              color: '#333',
+                              lineHeight: '1.85'
                             }}>
                               {renderMarkdown(content)}
                             </div>
@@ -631,23 +648,23 @@ const AnalysisScreen = () => {
 
                       {/* Disclaimer */}
                       <div style={{
-                        marginTop: '20px',
-                        padding: '14px 16px',
+                        marginTop: '24px',
+                        padding: '16px 18px',
                         background: '#f7f6f3',
-                        borderRadius: '8px',
+                        borderRadius: '10px',
                         display: 'flex',
                         alignItems: 'flex-start',
-                        gap: '12px'
+                        gap: '14px'
                       }}>
                         <span style={{
-                          fontSize: '16px',
+                          fontSize: '18px',
                           lineHeight: '1'
                         }}>ℹ️</span>
                         <p style={{
-                          fontSize: '12px',
-                          color: '#787774',
+                          fontSize: '14px',
+                          color: '#666',
                           margin: 0,
-                          lineHeight: '1.6'
+                          lineHeight: '1.7'
                         }}>
                           이 분석은 AI가 제공하는 참고 정보입니다. 정확한 진단과 치료는 반드시 의료 전문가와 상담하세요.
                         </p>
