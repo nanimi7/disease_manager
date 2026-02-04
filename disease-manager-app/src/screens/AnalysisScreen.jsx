@@ -558,8 +558,11 @@ const AnalysisScreen = () => {
                     </p>
                   </div>
                   <div style={statCardStyle('#fff3e0', '#ffb74d')}>
-                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px', whiteSpace: 'nowrap' }}>
+                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '2px', whiteSpace: 'nowrap' }}>
                       2회이상발생
+                    </p>
+                    <p style={{ fontSize: '9px', color: '#999', marginBottom: '4px' }}>
+                      (같은날기준)
                     </p>
                     <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#f57c00' }}>
                       {analysis.multiOccurrenceDays}<span style={{ fontSize: '14px' }}>일</span>
