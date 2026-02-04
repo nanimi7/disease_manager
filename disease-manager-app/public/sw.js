@@ -1,4 +1,4 @@
-const CACHE_NAME = 'disease-manager-v6';
+const CACHE_NAME = 'disease-manager-v7';
 const urlsToCache = [
   '/',
   '/index.html',

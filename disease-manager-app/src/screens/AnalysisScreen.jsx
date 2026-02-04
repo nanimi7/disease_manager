@@ -559,7 +559,7 @@ const AnalysisScreen = () => {
                   </div>
                   <div style={statCardStyle('#fff3e0', '#ffb74d')}>
                     <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px', whiteSpace: 'nowrap' }}>
-                      2회+ 발생
+                      2회이상발생
                     </p>
                     <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#f57c00' }}>
                       {analysis.multiOccurrenceDays}<span style={{ fontSize: '14px' }}>일</span>
@@ -590,24 +590,18 @@ const AnalysisScreen = () => {
                   </div>
                   <div style={statCardStyle('#fce4ec', '#f48fb1')}>
                     <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px', whiteSpace: 'nowrap' }}>
-                      최다 월
+                      최다발생
                     </p>
-                    <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#d81b60', lineHeight: '1.2' }}>
-                      {analysis.maxMonth}
-                      <span style={{ fontSize: '13px', fontWeight: '600', color: '#e91e63', marginLeft: '2px' }}>
-                        {analysis.maxMonthCount}회
-                      </span>
+                    <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#d81b60', lineHeight: '1.2' }}>
+                      {analysis.maxMonth}<span style={{ color: '#999', margin: '0 2px' }}>/</span><span style={{ fontSize: '16px' }}>{analysis.maxMonthCount}회</span>
                     </p>
                   </div>
                   <div style={statCardStyle('#e0f2f1', '#80cbc4')}>
                     <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px', whiteSpace: 'nowrap' }}>
-                      최소 월
+                      최소발생
                     </p>
-                    <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#00897b', lineHeight: '1.2' }}>
-                      {analysis.minMonth}
-                      <span style={{ fontSize: '13px', fontWeight: '600', color: '#26a69a', marginLeft: '2px' }}>
-                        {analysis.minMonthCount}회
-                      </span>
+                    <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#00897b', lineHeight: '1.2' }}>
+                      {analysis.minMonth}<span style={{ color: '#999', margin: '0 2px' }}>/</span><span style={{ fontSize: '16px' }}>{analysis.minMonthCount}회</span>
                     </p>
                   </div>
                 </div>
