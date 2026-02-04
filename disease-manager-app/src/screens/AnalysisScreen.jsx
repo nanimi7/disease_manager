@@ -402,130 +402,190 @@ const AnalysisScreen = () => {
                 </p>
               </div>
 
-              {/* AI Analysis */}
+              {/* AI Analysis - Notion Style */}
               <div style={{
-                background: aiAnalysis ? '#f0f7ff' : '#f8f9fa',
-                border: `1px solid ${aiAnalysis ? '#90caf9' : '#e9ecef'}`,
-                padding: '20px',
-                borderRadius: '12px',
-                marginBottom: '24px'
+                background: '#ffffff',
+                borderRadius: '8px',
+                marginBottom: '24px',
+                overflow: 'hidden'
               }}>
-                <h4 style={{
-                  fontSize: '14px',
-                  fontWeight: '600',
-                  color: '#333',
-                  marginBottom: '12px',
+                {/* Header */}
+                <div style={{
+                  padding: '16px 20px',
+                  borderBottom: '1px solid #e8e8e8',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px'
+                  gap: '10px'
                 }}>
-                  <span>🤖</span>
-                  AI 분석 결과
-                </h4>
-
-                {aiLoading ? (
                   <div style={{
-                    textAlign: 'center',
-                    padding: '40px 20px'
+                    width: '28px',
+                    height: '28px',
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    borderRadius: '6px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '14px'
                   }}>
-                    <div style={{
-                      width: '40px',
-                      height: '40px',
-                      border: '4px solid #e0e0e0',
-                      borderTop: '4px solid #667eea',
-                      borderRadius: '50%',
-                      animation: 'spin 1s linear infinite',
-                      margin: '0 auto 16px'
-                    }} />
-                    <p style={{ fontSize: '14px', color: '#666' }}>
-                      AI가 증상 데이터를 분석하고 있습니다...
-                    </p>
-                    <style>{`
-                      @keyframes spin {
-                        0% { transform: rotate(0deg); }
-                        100% { transform: rotate(360deg); }
-                      }
-                    `}</style>
+                    🤖
                   </div>
-                ) : aiAnalysis ? (
-                  <div style={{
-                    fontSize: '14px',
-                    color: '#333',
-                    lineHeight: '1.8'
+                  <span style={{
+                    fontSize: '15px',
+                    fontWeight: '600',
+                    color: '#37352f'
                   }}>
-                    {aiAnalysis.split('###').map((section, idx) => {
-                      if (idx === 0) return null;
-                      const lines = section.trim().split('\n');
-                      const title = lines[0]?.trim();
-                      const content = lines.slice(1).join('\n').trim();
+                    AI 분석 리포트
+                  </span>
+                </div>
 
-                      return (
-                        <div key={idx} style={{
-                          marginBottom: '16px',
-                          padding: '14px',
-                          background: 'white',
-                          borderRadius: '10px',
-                          border: '1px solid #e0e8f0'
-                        }}>
-                          <h5 style={{
-                            fontSize: '14px',
-                            fontWeight: '600',
-                            color: '#1976d2',
-                            marginBottom: '10px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px'
-                          }}>
-                            {title.includes('심각도') && '📊'}
-                            {title.includes('패턴') && '📈'}
-                            {title.includes('주의사항') && '⚠️'}
-                            {title.includes('의사') && '👨‍⚕️'}
-                            {title.includes('권고') && '💡'}
-                            {title}
-                          </h5>
-                          <div style={{
-                            fontSize: '13px',
-                            color: '#555',
-                            lineHeight: '1.7',
-                            whiteSpace: 'pre-wrap'
-                          }}>
-                            {content}
-                          </div>
-                        </div>
-                      );
-                    })}
-
+                {/* Content */}
+                <div style={{ padding: '20px' }}>
+                  {aiLoading ? (
                     <div style={{
-                      marginTop: '12px',
-                      padding: '10px 12px',
-                      background: '#fff3e0',
-                      borderRadius: '8px',
-                      border: '1px solid #ffcc80'
+                      textAlign: 'center',
+                      padding: '48px 20px'
                     }}>
+                      <div style={{
+                        width: '36px',
+                        height: '36px',
+                        border: '3px solid #f0f0f0',
+                        borderTop: '3px solid #667eea',
+                        borderRadius: '50%',
+                        animation: 'spin 0.8s linear infinite',
+                        margin: '0 auto 16px'
+                      }} />
                       <p style={{
-                        fontSize: '11px',
-                        color: '#e65100',
-                        margin: 0,
+                        fontSize: '14px',
+                        color: '#787774',
+                        margin: 0
+                      }}>
+                        AI가 데이터를 분석하고 있어요...
+                      </p>
+                      <style>{`
+                        @keyframes spin {
+                          0% { transform: rotate(0deg); }
+                          100% { transform: rotate(360deg); }
+                        }
+                      `}</style>
+                    </div>
+                  ) : aiAnalysis ? (
+                    <div>
+                      {aiAnalysis.split('###').map((section, idx) => {
+                        if (idx === 0) return null;
+                        const lines = section.trim().split('\n');
+                        const title = lines[0]?.trim().replace(/^\d+\.\s*/, '');
+                        const content = lines.slice(1).join('\n').trim();
+
+                        // 섹션별 색상 테마
+                        const getTheme = (t) => {
+                          if (t.includes('심각도')) return { bg: '#fff4f4', border: '#ffcdd2', icon: '📊', iconBg: '#ffebee' };
+                          if (t.includes('패턴')) return { bg: '#f3f0ff', border: '#d1c4e9', icon: '📈', iconBg: '#ede7f6' };
+                          if (t.includes('주의사항') || t.includes('생활')) return { bg: '#fff8e1', border: '#ffe082', icon: '💡', iconBg: '#fffde7' };
+                          if (t.includes('의사')) return { bg: '#e3f2fd', border: '#90caf9', icon: '👨‍⚕️', iconBg: '#e1f5fe' };
+                          if (t.includes('권고')) return { bg: '#e8f5e9', border: '#a5d6a7', icon: '✅', iconBg: '#f1f8e9' };
+                          return { bg: '#f7f6f3', border: '#e8e8e8', icon: '📌', iconBg: '#f0f0f0' };
+                        };
+
+                        const theme = getTheme(title);
+
+                        return (
+                          <div key={idx} style={{
+                            marginBottom: '16px',
+                            background: theme.bg,
+                            borderRadius: '8px',
+                            borderLeft: `4px solid ${theme.border}`,
+                            overflow: 'hidden'
+                          }}>
+                            {/* Section Header */}
+                            <div style={{
+                              padding: '14px 16px 12px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px'
+                            }}>
+                              <span style={{
+                                width: '24px',
+                                height: '24px',
+                                background: theme.iconBg,
+                                borderRadius: '4px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '13px'
+                              }}>
+                                {theme.icon}
+                              </span>
+                              <span style={{
+                                fontSize: '14px',
+                                fontWeight: '600',
+                                color: '#37352f'
+                              }}>
+                                {title}
+                              </span>
+                            </div>
+                            {/* Section Content */}
+                            <div style={{
+                              padding: '0 16px 14px 50px',
+                              fontSize: '13px',
+                              color: '#4a4a4a',
+                              lineHeight: '1.75',
+                              whiteSpace: 'pre-wrap'
+                            }}>
+                              {content}
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                      {/* Disclaimer */}
+                      <div style={{
+                        marginTop: '20px',
+                        padding: '14px 16px',
+                        background: '#f7f6f3',
+                        borderRadius: '8px',
                         display: 'flex',
                         alignItems: 'flex-start',
-                        gap: '6px'
+                        gap: '12px'
                       }}>
-                        <span>⚠️</span>
-                        <span>이 분석은 AI가 제공하는 참고 정보이며, 정확한 진단과 치료는 반드시 의료 전문가와 상담하세요.</span>
+                        <span style={{
+                          fontSize: '16px',
+                          lineHeight: '1'
+                        }}>ℹ️</span>
+                        <p style={{
+                          fontSize: '12px',
+                          color: '#787774',
+                          margin: 0,
+                          lineHeight: '1.6'
+                        }}>
+                          이 분석은 AI가 제공하는 참고 정보입니다. 정확한 진단과 치료는 반드시 의료 전문가와 상담하세요.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={{
+                      textAlign: 'center',
+                      padding: '40px 20px',
+                      color: '#9b9a97'
+                    }}>
+                      <div style={{
+                        width: '48px',
+                        height: '48px',
+                        background: '#f7f6f3',
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        margin: '0 auto 12px',
+                        fontSize: '20px'
+                      }}>
+                        🔍
+                      </div>
+                      <p style={{ fontSize: '13px', margin: 0 }}>
+                        분석을 시작하면 AI 리포트가 여기에 표시됩니다
                       </p>
                     </div>
-                  </div>
-                ) : (
-                  <div style={{
-                    textAlign: 'center',
-                    padding: '20px',
-                    color: '#999'
-                  }}>
-                    <p style={{ fontSize: '13px' }}>
-                      AI 분석 결과가 여기에 표시됩니다.
-                    </p>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
 
               {/* Detailed Records - 접기/펼치기 */}
