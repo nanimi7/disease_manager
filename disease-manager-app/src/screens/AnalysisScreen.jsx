@@ -145,6 +145,41 @@ const AnalysisScreen = () => {
     // 2회 이상 발생한 날짜 수
     const multiOccurrenceDays = Object.values(dateCount).filter(c => c >= 2).length;
 
+    // 월별 발생 횟수 계산
+    const monthlyCount = {};
+    symptoms.forEach(s => {
+      const month = s.date.substring(0, 7); // YYYY-MM 형식
+      monthlyCount[month] = (monthlyCount[month] || 0) + 1;
+    });
+
+    // 월 수 및 월평균 계산
+    const monthCount = Object.keys(monthlyCount).length;
+    const monthlyAvg = monthCount > 0 ? (count / monthCount).toFixed(1) : 0;
+
+    // 최대/최소 발생 월 찾기
+    let maxMonth = '';
+    let maxMonthCount = 0;
+    let minMonth = '';
+    let minMonthCount = Infinity;
+    Object.entries(monthlyCount).forEach(([month, cnt]) => {
+      if (cnt > maxMonthCount) {
+        maxMonth = month;
+        maxMonthCount = cnt;
+      }
+      if (cnt < minMonthCount) {
+        minMonth = month;
+        minMonthCount = cnt;
+      }
+    });
+    if (minMonthCount === Infinity) minMonthCount = 0;
+
+    // 월 포맷팅 함수
+    const formatMonth = (monthStr) => {
+      if (!monthStr) return '-';
+      const [year, month] = monthStr.split('-');
+      return `${parseInt(month)}월`;
+    };
+
     const startDateObj = new Date(startDate);
     const endDateObj = new Date(endDate);
     const totalDays = Math.ceil((endDateObj - startDateObj) / (1000 * 60 * 60 * 24)) + 1;
@@ -156,7 +191,13 @@ const AnalysisScreen = () => {
       totalDays,
       startDate,
       endDate,
-      symptoms
+      symptoms,
+      // 월별 통계
+      monthlyAvg,
+      maxMonth: formatMonth(maxMonth),
+      maxMonthCount,
+      minMonth: formatMonth(minMonth),
+      minMonthCount
     };
   };
 
@@ -470,12 +511,14 @@ const AnalysisScreen = () => {
             </div>
           ) : (
             <div>
-              {/* Basic Statistics - 3개만 표시 */}
+              {/* Basic Statistics - 6개 표시 */}
               <div style={{ marginBottom: '24px' }}>
+                {/* 첫번째 줄 - 기본 통계 */}
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: '12px'
+                  gap: '10px',
+                  marginBottom: '10px'
                 }}>
                   <div style={statCardStyle('#e3f2fd', '#90caf9')}>
                     <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px' }}>
@@ -499,6 +542,43 @@ const AnalysisScreen = () => {
                     </p>
                     <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#388e3c' }}>
                       {analysis.avgPainLevel}
+                    </p>
+                  </div>
+                </div>
+                {/* 두번째 줄 - 월별 통계 */}
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gap: '10px'
+                }}>
+                  <div style={statCardStyle('#f3e5f5', '#ce93d8')}>
+                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px' }}>
+                      월평균 발생
+                    </p>
+                    <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#8e24aa' }}>
+                      {analysis.monthlyAvg}회
+                    </p>
+                  </div>
+                  <div style={statCardStyle('#fce4ec', '#f48fb1')}>
+                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px' }}>
+                      최다 발생월
+                    </p>
+                    <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#d81b60' }}>
+                      {analysis.maxMonth}
+                    </p>
+                    <p style={{ fontSize: '11px', color: '#888', marginTop: '2px' }}>
+                      ({analysis.maxMonthCount}회)
+                    </p>
+                  </div>
+                  <div style={statCardStyle('#e0f2f1', '#80cbc4')}>
+                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px' }}>
+                      최소 발생월
+                    </p>
+                    <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#00897b' }}>
+                      {analysis.minMonth}
+                    </p>
+                    <p style={{ fontSize: '11px', color: '#888', marginTop: '2px' }}>
+                      ({analysis.minMonthCount}회)
                     </p>
                   </div>
                 </div>
