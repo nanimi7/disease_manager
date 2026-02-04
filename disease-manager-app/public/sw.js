@@ -1,4 +1,4 @@
-const CACHE_NAME = 'disease-manager-v5';
+const CACHE_NAME = 'disease-manager-v6';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -13,7 +13,14 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => cache.addAll(urlsToCache))
   );
-  self.skipWaiting();
+  // skipWaiting은 메시지로 제어
+});
+
+// 메시지 리스너 - 업데이트 요청 처리
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 // Activate event

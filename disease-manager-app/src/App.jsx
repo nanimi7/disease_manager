@@ -13,6 +13,50 @@ function MainApp() {
   const [activeTab, setActiveTab] = useState('profile');
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showUpdateBanner, setShowUpdateBanner] = useState(false);
+  const [waitingWorker, setWaitingWorker] = useState(null);
+
+  // 서비스 워커 업데이트 감지
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.ready.then((registration) => {
+        // 이미 대기 중인 워커가 있는지 체크
+        if (registration.waiting) {
+          setWaitingWorker(registration.waiting);
+          setShowUpdateBanner(true);
+        }
+
+        // 업데이트 발견 시 리스너
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // 새 버전이 설치됨 - 업데이트 배너 표시
+                setWaitingWorker(newWorker);
+                setShowUpdateBanner(true);
+              }
+            });
+          }
+        });
+      });
+
+      // 컨트롤러 변경 시 페이지 새로고침
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+          refreshing = true;
+          window.location.reload();
+        }
+      });
+    }
+  }, []);
+
+  const handleUpdate = () => {
+    if (waitingWorker) {
+      waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+    }
+  };
 
   // PWA 설치 가능 여부 및 standalone 모드 체크
   useEffect(() => {
@@ -148,6 +192,55 @@ function MainApp() {
           </button>
         </div>
       </header>
+
+      {/* Update Banner - 화면 상단 고정 */}
+      {showUpdateBanner && (
+        <div style={{
+          background: 'linear-gradient(135deg, #43a047 0%, #1b5e20 100%)',
+          padding: '14px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '16px'
+        }}>
+          <p style={{
+            color: 'white',
+            fontSize: '14px',
+            fontWeight: '500',
+            margin: 0
+          }}>
+            새로운 업데이트가 있습니다
+          </p>
+          <button
+            onClick={handleUpdate}
+            style={{
+              padding: '8px 16px',
+              background: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              color: '#1b5e20',
+              fontSize: '13px',
+              fontWeight: '600',
+              cursor: 'pointer'
+            }}
+          >
+            지금 업데이트
+          </button>
+          <button
+            onClick={() => setShowUpdateBanner(false)}
+            style={{
+              padding: '6px',
+              background: 'transparent',
+              border: 'none',
+              color: 'rgba(255,255,255,0.8)',
+              fontSize: '18px',
+              cursor: 'pointer'
+            }}
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       {/* Content */}
       <main style={{
