@@ -315,9 +315,9 @@ const AnalysisScreen = () => {
         if (i % 2 === 1) {
           // Bold 텍스트 처리
           // "소제목: 내용" 패턴 체크 (콜론 뒤에 내용이 있는 경우)
-          const colonMatch = part.match(/^(.+?:)\s*(.*)$/);
+          const colonMatch = part.match(/^(.+?):\s*(.*)$/);
           if (colonMatch && colonMatch[2]) {
-            // 소제목과 내용을 분리
+            // 소제목과 내용을 분리 (콜론 제거)
             result.push(
               <strong key={`${i}-header`} style={{
                 display: 'block',
@@ -332,7 +332,7 @@ const AnalysisScreen = () => {
               <span key={`${i}-content`} style={{ display: 'block' }}>{colonMatch[2]}</span>
             );
           } else if (part.endsWith(':')) {
-            // 콜론으로만 끝나면 서브헤더 스타일
+            // 콜론으로만 끝나면 서브헤더 스타일 (콜론 제거)
             result.push(
               <strong key={i} style={{
                 display: 'block',
@@ -341,7 +341,7 @@ const AnalysisScreen = () => {
                 fontSize: '15px',
                 marginTop: result.length > 0 ? '14px' : '0',
                 marginBottom: '6px'
-              }}>{part}</strong>
+              }}>{part.slice(0, -1)}</strong>
             );
           } else {
             // 일반 bold 텍스트
