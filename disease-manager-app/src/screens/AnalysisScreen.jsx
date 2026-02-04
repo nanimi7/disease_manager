@@ -546,30 +546,30 @@ const AnalysisScreen = () => {
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: '10px',
-                  marginBottom: '10px'
+                  gap: '8px',
+                  marginBottom: '8px'
                 }}>
                   <div style={statCardStyle('#e3f2fd', '#90caf9')}>
-                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px' }}>
-                      총 발생 횟수
+                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px', whiteSpace: 'nowrap' }}>
+                      총 발생
                     </p>
-                    <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#1976d2' }}>
-                      {analysis.count}회
+                    <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#1976d2' }}>
+                      {analysis.count}<span style={{ fontSize: '14px' }}>회</span>
                     </p>
                   </div>
                   <div style={statCardStyle('#fff3e0', '#ffb74d')}>
-                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px' }}>
-                      2회 이상 발생일
+                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px', whiteSpace: 'nowrap' }}>
+                      2회+ 발생
                     </p>
-                    <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#f57c00' }}>
-                      {analysis.multiOccurrenceDays}일
+                    <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#f57c00' }}>
+                      {analysis.multiOccurrenceDays}<span style={{ fontSize: '14px' }}>일</span>
                     </p>
                   </div>
                   <div style={statCardStyle('#e8f5e9', '#a5d6a7')}>
-                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px' }}>
-                      평균 통증강도
+                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px', whiteSpace: 'nowrap' }}>
+                      평균 통증
                     </p>
-                    <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#388e3c' }}>
+                    <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#388e3c' }}>
                       {analysis.avgPainLevel}
                     </p>
                   </div>
@@ -578,36 +578,36 @@ const AnalysisScreen = () => {
                 <div style={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: '10px'
+                  gap: '8px'
                 }}>
                   <div style={statCardStyle('#f3e5f5', '#ce93d8')}>
-                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px' }}>
-                      월평균 발생
+                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px', whiteSpace: 'nowrap' }}>
+                      월평균
                     </p>
-                    <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#8e24aa' }}>
-                      {analysis.monthlyAvg}회
+                    <p style={{ fontSize: '22px', fontWeight: 'bold', color: '#8e24aa' }}>
+                      {analysis.monthlyAvg}<span style={{ fontSize: '14px' }}>회</span>
                     </p>
                   </div>
                   <div style={statCardStyle('#fce4ec', '#f48fb1')}>
-                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px' }}>
-                      최다 발생월
+                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px', whiteSpace: 'nowrap' }}>
+                      최다 월
                     </p>
-                    <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#d81b60' }}>
+                    <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#d81b60', lineHeight: '1.2' }}>
                       {analysis.maxMonth}
-                    </p>
-                    <p style={{ fontSize: '11px', color: '#888', marginTop: '2px' }}>
-                      ({analysis.maxMonthCount}회)
+                      <span style={{ fontSize: '13px', fontWeight: '600', color: '#e91e63', marginLeft: '2px' }}>
+                        {analysis.maxMonthCount}회
+                      </span>
                     </p>
                   </div>
                   <div style={statCardStyle('#e0f2f1', '#80cbc4')}>
-                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px' }}>
-                      최소 발생월
+                    <p style={{ fontSize: '11px', color: '#666', marginBottom: '4px', whiteSpace: 'nowrap' }}>
+                      최소 월
                     </p>
-                    <p style={{ fontSize: '18px', fontWeight: 'bold', color: '#00897b' }}>
+                    <p style={{ fontSize: '20px', fontWeight: 'bold', color: '#00897b', lineHeight: '1.2' }}>
                       {analysis.minMonth}
-                    </p>
-                    <p style={{ fontSize: '11px', color: '#888', marginTop: '2px' }}>
-                      ({analysis.minMonthCount}회)
+                      <span style={{ fontSize: '13px', fontWeight: '600', color: '#26a69a', marginLeft: '2px' }}>
+                        {analysis.minMonthCount}회
+                      </span>
                     </p>
                   </div>
                 </div>
