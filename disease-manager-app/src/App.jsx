@@ -149,93 +149,6 @@ function MainApp() {
         </div>
       </header>
 
-      {/* PWA Install Banner */}
-      {showInstallBanner && (
-        <div style={{
-          maxWidth: '600px',
-          margin: '0 auto',
-          padding: '20px 20px 0 20px'
-        }}>
-          <div style={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            padding: '12px 16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '12px',
-            borderRadius: '12px'
-          }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              flex: 1
-            }}>
-              <img
-                src="/app-icon.png"
-                alt="App Icon"
-                style={{
-                  width: '40px',
-                  height: '40px',
-                  borderRadius: '10px'
-                }}
-              />
-              <div>
-                <p style={{
-                  fontSize: '13px',
-                  fontWeight: '600',
-                  color: 'white',
-                  margin: 0
-                }}>
-                  앱으로 더 편리하게!
-                </p>
-                <p style={{
-                  fontSize: '11px',
-                  color: 'rgba(255,255,255,0.85)',
-                  margin: '2px 0 0 0'
-                }}>
-                  홈 화면에 추가하고 빠르게 접속하세요
-                </p>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
-              <button
-                onClick={handleInstallClick}
-                style={{
-                  padding: '8px 14px',
-                  background: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  color: '#667eea',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  cursor: 'pointer'
-                }}
-              >
-                설치
-              </button>
-              <button
-                onClick={handleDismissBanner}
-                style={{
-                  padding: '8px',
-                  background: 'rgba(255,255,255,0.2)',
-                  border: 'none',
-                  borderRadius: '8px',
-                  color: 'white',
-                  fontSize: '16px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                ✕
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Content */}
       <main style={{
         flex: 1,
@@ -247,6 +160,88 @@ function MainApp() {
           margin: '0 auto',
           padding: '20px'
         }}>
+          {/* PWA Install Banner */}
+          {showInstallBanner && (
+            <div style={{
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              padding: '12px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '12px',
+              borderRadius: '12px',
+              marginBottom: '20px'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                flex: 1
+              }}>
+                <img
+                  src="/app-icon.png"
+                  alt="App Icon"
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '10px'
+                  }}
+                />
+                <div>
+                  <p style={{
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    color: 'white',
+                    margin: 0
+                  }}>
+                    앱으로 더 편리하게!
+                  </p>
+                  <p style={{
+                    fontSize: '11px',
+                    color: 'rgba(255,255,255,0.85)',
+                    margin: '2px 0 0 0'
+                  }}>
+                    홈 화면에 추가하고 빠르게 접속하세요
+                  </p>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                <button
+                  onClick={handleInstallClick}
+                  style={{
+                    padding: '8px 14px',
+                    background: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    color: '#667eea',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  설치
+                </button>
+                <button
+                  onClick={handleDismissBanner}
+                  style={{
+                    padding: '8px',
+                    background: 'rgba(255,255,255,0.2)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    color: 'white',
+                    fontSize: '16px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+          )}
+
           {activeTab === 'profile' && <ProfileScreen />}
           {activeTab === 'calendar' && <CalendarScreen />}
           {activeTab === 'analysis' && <AnalysisScreen />}
