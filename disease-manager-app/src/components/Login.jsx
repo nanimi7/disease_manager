@@ -37,20 +37,17 @@ const Login = ({ onToggleForm }) => {
       }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <div style={{
-            width: '80px',
-            height: '80px',
-            background: 'white',
-            borderRadius: '20px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '40px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
-            marginBottom: '20px'
-          }}>
-            🏥
-          </div>
+          <img
+            src="/app-icon.png"
+            alt="Disease Manager"
+            style={{
+              width: '80px',
+              height: '80px',
+              borderRadius: '20px',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+              marginBottom: '20px'
+            }}
+          />
           <h1 style={{
             fontSize: '32px',
             fontWeight: 'bold',

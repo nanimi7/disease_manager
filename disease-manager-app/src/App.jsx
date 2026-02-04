@@ -48,18 +48,15 @@ function MainApp() {
           margin: '0 auto'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              width: '40px',
-              height: '40px',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              borderRadius: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '22px'
-            }}>
-              🏥
-            </div>
+            <img
+              src="/app-icon.png"
+              alt="Disease Manager"
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '12px'
+              }}
+            />
             <div>
               <h1 style={{
                 fontSize: '18px',

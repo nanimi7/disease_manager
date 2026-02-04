@@ -58,20 +58,17 @@ const Signup = ({ onToggleForm }) => {
         margin: '0 auto'
       }}>
         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-          <div style={{
-            width: '70px',
-            height: '70px',
-            background: 'white',
-            borderRadius: '18px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '35px',
-            boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
-            marginBottom: '15px'
-          }}>
-            🏥
-          </div>
+          <img
+            src="/app-icon.png"
+            alt="Disease Manager"
+            style={{
+              width: '70px',
+              height: '70px',
+              borderRadius: '18px',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+              marginBottom: '15px'
+            }}
+          />
           <h1 style={{
             fontSize: '28px',
             fontWeight: 'bold',
