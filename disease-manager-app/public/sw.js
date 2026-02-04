@@ -1,8 +1,10 @@
-const CACHE_NAME = 'disease-manager-v1';
+const CACHE_NAME = 'disease-manager-v2';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/app-icon.png'
+  '/app-icon.png',
+  '/app-icon-192.png',
+  '/app-icon-512.png'
 ];
 
 // Install event
