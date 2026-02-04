@@ -33,21 +33,16 @@ function MainApp() {
       return;
     }
 
-    // beforeinstallprompt 이벤트 리스너
+    // 웹 브라우저에서는 항상 배너 표시
+    setShowInstallBanner(true);
+
+    // beforeinstallprompt 이벤트 리스너 (설치 기능용)
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      setShowInstallBanner(true);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-
-    // iOS Safari에서는 beforeinstallprompt가 발생하지 않으므로 별도 처리
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
-    if (isIOS && isSafari && !isStandalone) {
-      setShowInstallBanner(true);
-    }
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
