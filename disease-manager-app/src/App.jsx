@@ -130,19 +130,13 @@ function MainApp() {
         }}>
           {[
             { id: 'profile', label: '프로필', icon: (active) => (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? 'url(#gradient)' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <defs>
-                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#667eea" />
-                    <stop offset="100%" stopColor="#764ba2" />
-                  </linearGradient>
-                </defs>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? '#667eea' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
               </svg>
             )},
             { id: 'calendar', label: '캘린더', icon: (active) => (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? 'url(#gradient)' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? '#667eea' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                 <line x1="16" y1="2" x2="16" y2="6" />
                 <line x1="8" y1="2" x2="8" y2="6" />
@@ -150,7 +144,7 @@ function MainApp() {
               </svg>
             )},
             { id: 'analysis', label: '분석', icon: (active) => (
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? 'url(#gradient)' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={active ? '#667eea' : '#9ca3af'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="20" x2="18" y2="10" />
                 <line x1="12" y1="20" x2="12" y2="4" />
                 <line x1="6" y1="20" x2="6" y2="14" />
@@ -168,10 +162,9 @@ function MainApp() {
                   flexDirection: 'column',
                   alignItems: 'center',
                   gap: '6px',
-                  padding: '8px 12px',
-                  background: isActive ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%)' : 'transparent',
+                  padding: '10px 12px',
+                  background: 'transparent',
                   border: 'none',
-                  borderRadius: '12px',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                   position: 'relative'
@@ -183,7 +176,7 @@ function MainApp() {
                     top: 0,
                     left: '50%',
                     transform: 'translateX(-50%)',
-                    width: '20px',
+                    width: '32px',
                     height: '3px',
                     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                     borderRadius: '0 0 3px 3px'
