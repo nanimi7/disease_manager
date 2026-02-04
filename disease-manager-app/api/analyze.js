@@ -59,15 +59,23 @@ export default async function handler(req, res) {
     const monthCount = Object.keys(monthlyCount).length;
     const monthlyAvg = monthCount > 0 ? (totalCount / monthCount).toFixed(1) : 0;
 
-    // 최다 발생 월 찾기
+    // 최다/최소 발생 월 찾기
     let maxMonth = '';
     let maxMonthCount = 0;
+    let minMonth = '';
+    let minMonthCount = Infinity;
     Object.entries(monthlyCount).forEach(([month, count]) => {
       if (count > maxMonthCount) {
         maxMonth = month;
         maxMonthCount = count;
       }
+      if (count < minMonthCount) {
+        minMonth = month;
+        minMonthCount = count;
+      }
     });
+    // minMonthCount가 Infinity면 데이터 없음
+    if (minMonthCount === Infinity) minMonthCount = 0;
 
     // 월 이름 포맷팅
     const formatMonth = (monthStr) => {
@@ -95,7 +103,8 @@ export default async function handler(req, res) {
 - 평균 통증 강도: ${avgPainLevel}/10
 - 약물 복용률: ${medicationRate}%
 - 월평균 발생 빈도: ${monthlyAvg}회
-- 최다 발생 월: ${formatMonth(maxMonth)} (${maxMonthCount}회)
+- 월 최대 발생: ${formatMonth(maxMonth)} (${maxMonthCount}회)
+- 월 최소 발생: ${formatMonth(minMonth)} (${minMonthCount}회)
 - 월별 발생 현황: ${Object.entries(monthlyCount).map(([m, c]) => `${formatMonth(m)}: ${c}회`).join(', ')}
 - 통증 분포: ${JSON.stringify(painDistribution)}
 
